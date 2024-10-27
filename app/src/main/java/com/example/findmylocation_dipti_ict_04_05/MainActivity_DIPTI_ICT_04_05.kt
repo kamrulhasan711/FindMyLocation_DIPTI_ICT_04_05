@@ -12,67 +12,81 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class MainActivity_DIPTI_ICT_04_05 : AppCompatActivity() {
-    private val binding by lazy {
-        ActivityMainDiptiIct0405Binding.inflate(layoutInflater)
-    }
-    lateinit var actionDrawerToggle: ActionBarDrawerToggle
+
+    private lateinit var binding: ActivityMainDiptiIct0405Binding
+    private lateinit var actionDrawerToggle: ActionBarDrawerToggle
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainDiptiIct0405Binding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupNavigation()
+    }
+
+    private fun setupNavigation() {
         val navController = findNavController(R.id.fragmentContainerView)
+
+        // Setup bottom navigation
         binding.bottomBar.setupWithNavController(navController)
+
+        // Setup drawer navigation
         binding.drawerNav.setupWithNavController(navController)
 
+        // Setup ActionBarDrawerToggle
         actionDrawerToggle = ActionBarDrawerToggle(
             this, binding.drawerLayout,
             R.string.nav_open,
             R.string.nav_close
         )
+        binding.drawerLayout.addDrawerListener(actionDrawerToggle)
         actionDrawerToggle.syncState()
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding.drawerNav.setNavigationItemSelectedListener {
-            when (it.itemId) {
+        // Handle drawer item clicks
+        binding.drawerNav.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
                 R.id.logout -> {
-                    Firebase.auth.signOut()
-                    startActivity(
-                        Intent(this, LoginActivity_DIPTI_ICT_04_05::class.java)
-                    )
-                    finish()
+                    logout()
+                    true
                 }
                 R.id.profile -> {
                     navController.navigate(R.id.profileFragment)
-
+                    true
                 }
                 R.id.friends -> {
                     navController.navigate(R.id.friendsFragment)
+                    true
                 }
-
+                else -> false
             }
-            true
         }
-        binding.bottomBar.setOnItemSelectedListener {
-            when (it.itemId) {
+
+        // Handle bottom navigation item clicks
+        binding.bottomBar.setOnItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
                 R.id.logout -> {
-                    Firebase.auth.signOut()
-                    startActivity(
-                        Intent(this, LoginActivity_DIPTI_ICT_04_05::class.java)
-                    )
-                    finish()
+                    logout()
+                    true
                 }
                 R.id.friends -> {
                     navController.navigate(R.id.friendsFragment)
+                    true
                 }
                 R.id.profile -> {
                     navController.navigate(R.id.profileFragment)
+                    true
                 }
-
+                else -> false
             }
-            true
         }
+    }
 
+    private fun logout() {
+        Firebase.auth.signOut()
+        startActivity(Intent(this, LoginActivity_DIPTI_ICT_04_05::class.java))
+        finish()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

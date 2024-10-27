@@ -3,7 +3,6 @@ package com.example.findmylocation_dipti_ict_04_05
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -39,30 +38,42 @@ class MapsActivity_DIPTI_ICT_04_05 : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        firestoreViewModelDIPTIICT0405.getAllUsers(this) {
-            for (user in it) {
+        firestoreViewModelDIPTIICT0405.getAllUsers(this) { users ->
+            var lastLatLng: LatLng? = null
+
+            for (user in users) {
                 val userLocation = user.location
-                val latLng = parseLocation(userLocation)
-                if (userLocation.isEmpty()||userLocation == "Don't found any location yet"||userLocation == "Location not available") {
-                    LatLng(37.4220936, -122.083922)
-                }else{
+                val latLng: LatLng
+
+                if (userLocation.isEmpty() || userLocation == "Don't found any location yet" || userLocation == "Location not available") {
+                    latLng = LatLng(37.4220936, -122.083922) // Default location
+                } else {
+                    latLng = parseLocation(userLocation)
                     val markerOptions = MarkerOptions().position(latLng).title(user.displayname)
                     googleMap.addMarker(markerOptions)
                 }
-                val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
-                googleMap.animateCamera(cameraUpdate)
+
+                lastLatLng = latLng // Update lastLatLng
+            }
+
+            // Move the camera to the last user's location
+            lastLatLng?.let {
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it, 15f))
             }
         }
     }
 
     private fun parseLocation(location: String): LatLng {
-        val latLngSplit = location.split(", ")
-        val latitude = latLngSplit[0].substringAfter("Lat: ").toDouble()
-        val longitude = latLngSplit[1].substringAfter("Long: ").toDouble()
-        return LatLng(latitude, longitude)
+        return try {
+            val latLngSplit = location.split(", ")
+            val latitude = latLngSplit[0].substringAfter("Lat: ").toDouble()
+            val longitude = latLngSplit[1].substringAfter("Long: ").toDouble()
+            LatLng(latitude, longitude)
+        } catch (e: Exception) {
+            LatLng(37.4220936, -122.083922) // Fallback to default location in case of error
+        }
     }
 }
