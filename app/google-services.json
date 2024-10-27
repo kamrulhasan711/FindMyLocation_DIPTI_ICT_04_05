@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "396580743338",
+    "project_id": "findmylocationdipti-ict-04-05",
+    "storage_bucket": "findmylocationdipti-ict-04-05.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396580743338:android:414120a0ab9fd77af9c8d3",
+        "android_client_info": {
+          "package_name": "com.example.findmylocation_dipti_ict_04_05"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmVdw3N71f6lOMRn2iLcbivV6BM4Dbp0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
